@@ -68,10 +68,13 @@ function Home() {
 
   return (
     <div className="home px-4 lg:px-8 py-4 bg-gray-700 flex flex-col items-center gap-4 min-h-screen max-h-screen">
-      <div className="bg-cyan-800 pt-2 pb-4 rounded w-full flex flex-col items-center gap-4">
-        <h1 className="text-center text-2xl text-white font-bold">
-          Movie Search
-        </h1>
+      <div className="bg-cyan-800 py-4 rounded w-full flex flex-col items-center gap-4">
+        <div className="flex items-center gap-2">
+          <img src="/video-player.png" className="h-8"/>
+          <h1 className="text-center text-2xl text-white font-bold">
+            Movie Search
+          </h1>
+        </div>
         <form
           onSubmit={handleSearch}
           className="flex justify-center gap-2 w-10/12 md:w-2/3"
@@ -92,12 +95,17 @@ function Home() {
         </form>
       </div>
 
-      {error && <p className="text-center text-2xl flex justify-center items-center mt-10 font-semibold text-red-600">{error}</p>}
-
-      {movies.length === 0 && !error && (
-        <div className="text-center text-2xl flex justify-center items-center min-h-[70vh] font-semibold text-white">- Search Your Movie Please -</div>
+      {error && (
+        <p className="text-center text-2xl flex justify-center items-center mt-10 font-semibold text-red-600">
+          {error}
+        </p>
       )}
 
+      {movies.length === 0 && !error && (
+        <div className="text-center text-2xl flex justify-center items-center min-h-[70vh] font-semibold text-white">
+          - Search Your Movie Please -
+        </div>
+      )}
 
       {movies.length > 0 && (
         <div className="w-full sticky top-4 flex justify-between gap-4">
@@ -107,9 +115,7 @@ function Home() {
             className="bg-gray-300 hover:bg-gray-500 p-2 w-fit rounded"
             onChange={handleSelect}
           >
-            <option value="">
-              -select-
-            </option>
+            <option value="">-select-</option>
             <option value="movie">Movie</option>
             <option value="series">Series</option>
             <option value="episode">Episode</option>
