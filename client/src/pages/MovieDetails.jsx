@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import Loader from "../components/Loader";
-import dotenv from "dotenv";
-dotenv.config();
+
 
 function MovieDetails() {
   const { id } = useParams();
@@ -14,7 +13,7 @@ function MovieDetails() {
     const fetchMovieDetails = async () => {
       try {
         const response = await axios.get(
-          `https://www.omdbapi.com/?i=${id}&apikey=${process.env.API_KEY}`
+          `https://www.omdbapi.com/?i=${id}&apikey=1ec5391a`
         );
         if (response.data.Response === "True") {
           setMovie(response.data);

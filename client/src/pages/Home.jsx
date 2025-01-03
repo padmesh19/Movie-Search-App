@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import dotenv from "dotenv";
-dotenv.config();
+
 
 function Home() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -14,7 +13,7 @@ function Home() {
   const fetchMovies = async () => {
     try {
       const response = await axios.get(
-        `https://www.omdbapi.com/?s=${searchQuery}&page=${page}&apikey=${process.env.API_KEY}`
+        `https://www.omdbapi.com/?s=${searchQuery}&page=${page}&apikey=1ec5391a`
       );
       if (response.data.Response === "True") {
         setMovies(response.data.Search);
@@ -32,7 +31,7 @@ function Home() {
   const fetchMoviesWithType = async (type) => {
     try {
       const response = await axios.get(
-        `https://www.omdbapi.com/?s=${searchQuery}&type=${type}&page=${page}&apikey=${process.env.API_KEY}`
+        `https://www.omdbapi.com/?s=${searchQuery}&type=${type}&page=${page}&apikey=1ec5391a`
       );
       if (response.data.Response === "True") {
         setMovies(response.data.Search);
