@@ -1,21 +1,39 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
-
 function Home() {
-  const [searchQuery, setSearchQuery] = useState("");
+  const { name, type, page } = useParams();
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState(name || "");
+  const [genre, setGenre] = useState(type || "");
   const [movies, setMovies] = useState([]);
   const [error, setError] = useState(null);
-  const [page, setPage] = useState(1);
+  const [pageNum, setPageNum] = useState(Number(page) || 1);
   const [totalResults, setTotalResults] = useState(0);
+
+  const handleHomeClick = () => {
+    navigate("/", { replace: true });
+    window.location.reload();
+  };
+
+  useEffect(() => {
+    if (searchQuery) {
+      if (genre) {
+        fetchMoviesWithType(genre);
+      } else {
+        fetchMovies();
+      }
+    }
+  }, [searchQuery, genre, pageNum]);
 
   const fetchMovies = async () => {
     try {
       const response = await axios.get(
-        `https://www.omdbapi.com/?s=${searchQuery}&page=${page}&apikey=1ec5391a`
+        `https://www.omdbapi.com/?s=${searchQuery}&page=${pageNum}&apikey=1ec5391a`
       );
       if (response.data.Response === "True") {
+        navigate(`/${searchQuery}/${pageNum}`, { replace: true });
         setMovies(response.data.Search);
         setTotalResults(Number(response.data.totalResults));
         setError(null);
@@ -28,12 +46,15 @@ function Home() {
     }
   };
 
-  const fetchMoviesWithType = async (type) => {
+  const fetchMoviesWithType = async (selectedType) => {
     try {
       const response = await axios.get(
-        `https://www.omdbapi.com/?s=${searchQuery}&type=${type}&page=${page}&apikey=1ec5391a`
+        `https://www.omdbapi.com/?s=${searchQuery}&type=${selectedType}&page=${pageNum}&apikey=1ec5391a`
       );
       if (response.data.Response === "True") {
+        navigate(`/${searchQuery}/${selectedType}/${pageNum}`, {
+          replace: true,
+        });
         setMovies(response.data.Search);
         setTotalResults(Number(response.data.totalResults));
         setError(null);
@@ -48,33 +69,37 @@ function Home() {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    setPage(1);
-    fetchMovies();
-  };
-
-  const handleSelect = (e) => {
-    e.preventDefault();
-    setPage(1);
-    fetchMoviesWithType(e.target.value);
-   };
-
-  const handlePageChange = (direction) => {
-    const newPage = page + direction;
-    if (newPage > 0 && newPage <= Math.ceil(totalResults / 10)) {
-      setPage(newPage);
+    if (searchQuery.trim()) {
+      setPageNum(1);
       fetchMovies();
     }
   };
 
+  const handleSelect = (e) => {
+    setGenre(e.target.value);
+    setPageNum(1);
+  };
+
+  const handlePageChange = (direction) => {
+    const newPage = pageNum + direction;
+    if (newPage > 0 && newPage <= Math.ceil(totalResults / 10)) {
+      setPageNum(newPage);
+    }
+  };
+
   return (
-    <div className="home px-4 lg:px-8 py-4 bg-gray-700 flex flex-col items-center gap-4 min-h-screen max-h-screen">
+    <div className="home px-4 lg:px-8 py-4 bg-gray-700 flex flex-col items-center gap-4 min-h-screen">
       <div className="bg-cyan-800 py-4 rounded w-full flex flex-col items-center gap-4">
-        <div className="flex items-center gap-2">
-          <img src="/video-player.png" className="h-8"/>
+        <Link
+          to="/"
+          onClick={handleHomeClick}
+          className="flex items-center gap-2"
+        >
+          <img src="/video-player.png" className="h-8" alt="logo" />
           <h1 className="text-center text-2xl text-white font-bold">
             Movie Search
           </h1>
-        </div>
+        </Link>
         <form
           onSubmit={handleSearch}
           className="flex justify-center gap-2 w-10/12 md:w-2/3"
@@ -88,7 +113,7 @@ function Home() {
           />
           <button
             type="submit"
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded w-fit"
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
           >
             Search
           </button>
@@ -96,7 +121,7 @@ function Home() {
       </div>
 
       {error && (
-        <p className="text-center text-2xl flex justify-center items-center mt-10 font-semibold text-red-600">
+        <p className="text-center text-2xl mt-10 font-semibold text-red-600">
           {error}
         </p>
       )}
@@ -108,11 +133,12 @@ function Home() {
       )}
 
       {movies.length > 0 && (
-        <div className="w-full sticky top-4 flex justify-between gap-4">
+        <div className="w-full flex justify-between gap-4">
           <select
             name="movie-type"
             id="movie-type"
             className="bg-gray-300 hover:bg-gray-500 p-2 w-fit rounded"
+            value={genre}
             onChange={handleSelect}
           >
             <option value="">-select-</option>
@@ -123,14 +149,14 @@ function Home() {
           <div className="flex gap-4">
             <button
               onClick={() => handlePageChange(-1)}
-              disabled={page === 1}
+              disabled={pageNum === 1}
               className="bg-gray-400 hover:bg-gray-500 px-4 py-2 rounded"
             >
               Previous
             </button>
             <button
               onClick={() => handlePageChange(1)}
-              disabled={page === Math.ceil(totalResults / 10)}
+              disabled={pageNum === Math.ceil(totalResults / 10)}
               className="bg-gray-400 hover:bg-gray-500 px-4 py-2 rounded"
             >
               Next
