@@ -95,7 +95,20 @@ function Home() {
   return (
     <div className="home px-4 lg:px-8 py-4 bg-gray-700 flex flex-col items-center gap-4 min-h-screen max-h-screen">
       <div className="bg-cyan-800 py-4 rounded w-full flex flex-col items-center gap-4">
-        <Link to="/" className="flex items-center gap-2">
+        <Link
+          to="/"
+          className="flex items-center gap-2"
+          onClick={() => {
+            localStorage.removeItem("lastSearchQuery");
+            localStorage.removeItem("lastGenre");
+            localStorage.removeItem("lastPageNum");
+            setSearchQuery("");
+            setGenre("");
+            setPageNum(1);
+            setMovies([]);
+            setError(null);
+          }}
+        >
           <img src="/video-player.png" className="h-8" />
           <h1 className="text-center text-2xl text-white font-bold">
             Movie Search
