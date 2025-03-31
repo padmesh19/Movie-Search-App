@@ -29,7 +29,6 @@ function MovieDetails() {
     fetchMovieDetails();
   }, [id]);
 
-  // Function to go back to the last visited page
   const handleBack = () => {
     const lastSearchQuery = localStorage.getItem("lastSearchQuery") || "";
     const lastGenre = localStorage.getItem("lastGenre") || "";
